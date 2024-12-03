@@ -9,7 +9,7 @@ def download(url: str) -> dict:
 
 def download_poke_cached(id: int) -> dict:
     
-    cache_path= f"cache/{id}.json"
+    cache_path= f"../cache/{id}.json"
     
     if os.path.isfile(cache_path):
         with open(cache_path,"r") as f:
@@ -18,3 +18,7 @@ def download_poke_cached(id: int) -> dict:
     else:
         url = f"https://pokeapi.co/api/v2/pokemon/{id}/"
         f_data=download(url)
+        f = open(cache_path,"w")
+        json.dump(f_data,f)
+        f.close()
+        return f_data
