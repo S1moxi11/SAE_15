@@ -35,4 +35,19 @@ def max_pc(level=100):
 """print(max_pc())"""
 
 top_10 = heapq.nlargest(10, max_pc().items(), key=lambda x: x[1])
-print(top_10)
+"""print(top_10)"""
+
+def img(L):
+    dico={}
+    nrml=None
+    shiny=None
+    for i in L:
+        for keys, val in req("https://pokeapi.co/api/v2/pokemon-form/"+i[0])["sprites"].items():
+            if keys == "front_default":
+                nrml=val
+            elif keys == "front_shiny":
+                shiny=val
+            dico[i[0]]=[nrml, shiny]
+    return dico
+
+print(img(top_10))
