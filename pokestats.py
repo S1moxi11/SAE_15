@@ -6,12 +6,6 @@ from utils.download_cache import *
 def req(ch:str):
     return requests.get(ch).json()
 
-dicopoke = req("https://pokeapi.co/api/v2/")
-
-dracofeu = req("https://pokeapi.co/api/v2/pokemon/charizard")
-
-"""print("La taille de dracofeu est de : " + str(req("https://pokeapi.co/api/v2/pokemon/charizard")["height"]))
-"""
 
 def max_pc(level=100):
     dico = {}
