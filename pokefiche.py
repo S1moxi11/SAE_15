@@ -1,5 +1,10 @@
 import requests
 from utils.download_cache import *
+"""import argparse
+
+parser = argparse.ArgumentParser()""" 
+
+# A COMPLETER
 
 id_choice=input("Entrez l'id ou le nom en anglais du pokémon sur lequel vous souhaitez avoir des informations : ")
 
@@ -30,4 +35,5 @@ def stats_poke(id):
 
 """print(stats_poke(646))"""
 print(stats_poke(id_choice))
+print("\nVoici une photo du pokémon :\n" + download_poke_cached(id_choice)["sprites"]["front_default"]+"\n")
 
