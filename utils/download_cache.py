@@ -8,7 +8,8 @@ def download(url: str) -> dict:
     return dl.json()
 
 def download_poke_cached(id: int) -> dict:
-    
+    if not os.path.isdir('../cache'):
+        os.mkdir("../cache")
     cache_path= f"../cache/{id}.json"
     
     if os.path.isfile(cache_path):
