@@ -30,9 +30,8 @@ def max_pc(level=100):
     return dico
 
 
-print(max_pc())
-
-# top_10 = heapq.nlargest(10, max_pc().items(), key=lambda x: x[1])
+"""print(max_pc())"""
+top_10 = heapq.nlargest(10, max_pc().items(), key=lambda x: x[1])
 """print(top_10)"""
 
 def img(L):
@@ -48,4 +47,4 @@ def img(L):
             dico[i[0]]=[nrml, shiny]
     return dico
 
-# print(img(top_10))
+print(img(top_10))
