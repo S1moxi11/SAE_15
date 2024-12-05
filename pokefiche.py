@@ -1,18 +1,21 @@
 import requests
 from utils.download_cache import *
-"""import argparse
+from utils.md_to_html import *
+import argparse
 
-parser = argparse.ArgumentParser()""" 
+parser = argparse.ArgumentParser()
+parser.add_argument("poke", help="Entrez l'ID ou le nom d'un pokémon", type=int or type)
+args = parser.parse_args()
 
-# A COMPLETER
 
-id_choice=input("Entrez l'id ou le nom en anglais du pokémon sur lequel vous souhaitez avoir des informations : ")
 
 def req(ch:str):
     return requests.get(ch).json()
 
-def stats_poke(id):
-    data=download_poke_cached(id)
+def download_poke(id: int) -> dict:
+   return req("https://pokeapi.co/api/v2/pokemon/"+str(id))
+
+def poke_to_md(data: dict, filename: str) -> None:
     dico={}
     dico["height"]=data["height"]
     dico["weight"]=data["weight"]
@@ -29,11 +32,29 @@ def stats_poke(id):
     for i in data["types"]:
         dico["type "+str(nb)]=i["type"]["name"]
         nb+=1
-    print('\nVoici les informations sur '+data["forms"][0]["name"]+" :")
-    return dico
+    types=""
+    for key, value in dico.items():
+        if key.startswith("type"):
+            types += value.upper()+" "
+
+    with open(filename,'w') as f:
+
+        f.write("# <center> HEY ! VOICI UNE FICHE SUR "+data["forms"][0]["name"].upper()+"</center> \n <br><br>")
+        f.write("- Son poids est de : "+str(dico["weight"])+"\n <br><br>")
+        f.write("- Sa taille est de : "+str(dico["height"])+"\n <br><br>")
+        f.write("- Son/ses type(s) sont : "+ types +"\n <br><br>")
+        f.write("- Son nombre de points de vie est de : "+str(dico["hp"])+"\n <br><br>")
+        f.write("- Sa puissance d'attaque est de : "+str(dico["attack"])+"\n <br><br>")
+        f.write("- Ses points de defense sont de : "+str(dico["defense"])+"\n <br><br>")
+        f.write("- Sa vitesse est de : "+str(dico["height"])+"\n <br><br><br>")
+        f.write("![alt text]("+data["sprites"]["front_default"]+")")
 
 
-"""print(stats_poke(646))"""
-print(stats_poke(id_choice))
-print("\nVoici une photo du pokémon :\n" + download_poke_cached(id_choice)["sprites"]["front_default"]+"\n")
+
+def fiche_pokemon(id: int) -> None:
+    poke_to_md(download_poke(id), "README.md")
+    convert("README.md","readme.html")
+
+
+fiche_pokemon(args.poke)
 
