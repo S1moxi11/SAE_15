@@ -1,7 +1,9 @@
 import requests
 from utils.download_cache import *
 from utils.md_to_html import *
+from utils.trad import *
 import argparse
+import webbrowser
 
 parser = argparse.ArgumentParser()
 parser.add_argument("poke", help="Entrez l'ID ou le nom d'un pokémon", type=int or type)
@@ -30,7 +32,7 @@ def poke_to_md(data: dict, filename: str) -> None:
             dico["speed"] = stats["base_stat"]
     nb=1
     for i in data["types"]:
-        dico["type "+str(nb)]=i["type"]["name"]
+        dico["type "+str(nb)]=trad(i["type"]["url"])
         nb+=1
     types=""
     for key, value in dico.items():
@@ -39,7 +41,7 @@ def poke_to_md(data: dict, filename: str) -> None:
 
     with open(filename,'w') as f:
 
-        f.write("# <center> HEY ! VOICI UNE FICHE SUR "+data["forms"][0]["name"].upper()+"</center> \n <br><br>")
+        f.write("# <center> HEY ! VOICI UNE FICHE SUR "+str(trad(data["species"]["url"])).upper()+"</center> \n <br><br>")
         f.write("- Son poids est de : "+str(dico["weight"])+"\n <br><br>")
         f.write("- Sa taille est de : "+str(dico["height"])+"\n <br><br>")
         f.write("- Son/ses type(s) sont : "+ types +"\n <br><br>")
@@ -52,9 +54,10 @@ def poke_to_md(data: dict, filename: str) -> None:
 
 
 def fiche_pokemon(id: int) -> None:
-    poke_to_md(download_poke(id), "README.md")
-    convert("README.md","readme.html")
+    poke_to_md(download_poke(id), "page_poke.md")
+    convert("page_poke.md","page_poke.html")
 
 
 fiche_pokemon(args.poke)
 
+webbrowser.open("page_poke.html")
