@@ -4,14 +4,15 @@ import heapq
 from utils.download_cache import *
 from utils.trad import *
 import webbrowser
+from collections import Counter
+
 
 def req(ch:str):
     return requests.get(ch).json()
 
-"""def get_dataset():
-    L=[]
-    for i in download("https://pokeapi.co/api/v2/pokemon/?limit=1302")["results"]:
-        L.append(download_poke_cached(i["url"].split("/")[-2]))"""
+
+def get_dataset(id : int):
+    return download_poke_cached(id)
 
 
 def compute_statistics(level=100):
@@ -49,9 +50,10 @@ def trad_list(L):
         nvL.append(((trad(req("https://pokeapi.co/api/v2/pokemon/"+i[0])["species"]["url"]),i[0]),i[1]))
     return nvL
     
-"""print(trad_list(top_10))"""
-
+"""print(trad_list(top_10))
+"""
 def img(L):
+    """Renvoie un dictionnaire aves les photos normal et shiny du poke -> nom poke : photo normal , photo shiny"""
     dico={}
     nrml=None
     shiny=None
@@ -65,15 +67,42 @@ def img(L):
     return dico
 
 
-print(img(trad_list(top_10)))
+"""print(img(trad_list(top_10)))"""
 
+def types_pokemons(data):
+    """Renvoie un dictionnaire des types du pokemon -> type n : type"""
+    dico={}
+    nvdico={}
+    nb=1
+    for i in data["types"]:
+        dico["type "+str(nb)]=trad(i["type"]["url"])
+        nb+=1
+    types=""
+    for key, value in dico.items():
+        if key.startswith("type"):
+            types += value.upper()+" "
+    nvdico[trad(data["species"]["url"])]=dico
+    return nvdico
 
-def types_pokemons():
-    pass
+"""print(types_pokemons(get_dataset(25)))
+"""
+def moyenne_types(L):
+    """Cette fonction renvoie le nombre de fois ou on croise un type dans le dictionnaire des pokemons ayant le plus de pc"""
+    type_counter = Counter()
+    for el in L:
+        types_dict = types_pokemons(get_dataset(el[0][1]))
+        for pokemon, types in types_dict.items():
+            type_counter[types['type 1']] += 1
+            if 'type 2' in types:
+                type_counter[types['type 2']] += 1
 
-def moyenne_types():
-    pass
+    return dict(type_counter)
+    
 
+"""print(moyenne_types(trad_list(top_10)))"""
+leplus_types=heapq.nlargest(3, moyenne_types(trad_list(top_10)).items(), key=lambda x: x[1])
+print(leplus_types)
+# Ici on renvoie les trois types les plus rencontrés dans la liste des 10 pokemons ayant le plus de pcs
 
 def poke_to_md(data: dict, filename: str) -> None:
     # A completer
@@ -89,3 +118,4 @@ def poke_to_md(data: dict, filename: str) -> None:
 
 """Donner la moyenne des pc des pokemons 
 ayant le plus de pcs en fonction de leurs types"""
+
