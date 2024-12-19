@@ -7,5 +7,3 @@ def convert(md,html_file):
 
     with open(html_file, 'w') as f:
         f.write(html)
-
-convert("README.md","readme.html")
