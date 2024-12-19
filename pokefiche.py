@@ -6,7 +6,7 @@ import argparse
 import webbrowser
 
 parser = argparse.ArgumentParser()
-parser.add_argument("poke", help="Entrez l'ID ou le nom d'un pokémon", type=int or type)
+parser.add_argument("poke", help="Entrez l'ID ou le nom d'un pokémon en anglais")
 args = parser.parse_args()
 
 
