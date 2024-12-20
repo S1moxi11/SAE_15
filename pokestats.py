@@ -51,7 +51,7 @@ def compute_statistics(dataset=dataset, level=100):
     return dico
 
 """print(compute_statistics)"""
-"""top_10 = heapq.nlargest(10, compute_statistics().items(), key=lambda x: x[1])"""
+top_10 = heapq.nlargest(10, compute_statistics().items(), key=lambda x: x[1])
 """top_50 = heapq.nlargest(50, compute_statistics().items(), key=lambda x: x[1])"""
 """print(top_10)"""
 
@@ -59,27 +59,11 @@ def trad_list(L):
     """traduis le nom / le type"""
     nvL=[]
     for i in L:
-        nvL.append(((trad(req("https://pokeapi.co/api/v2/pokemon/"+i[0])["species"]["url"]),i[0]),i[1]))
+        nvL.append(((trad(download_poke_cached(i[0])["species"]["url"]),i[0]),i[1]))
     return nvL
     
 """print(trad_list(top_10))"""
 
-def img(L):
-    """Renvoie un dictionnaire aves les photos normal et shiny du poke -> nom poke : photo normal , photo shiny"""
-    dico={}
-    nrml=None
-    shiny=None
-    for i in L:
-        for keys, val in req("https://pokeapi.co/api/v2/pokemon-form/"+i[0][1])["sprites"].items():
-            if keys == "front_default":
-                nrml=val
-            elif keys == "front_shiny":
-                shiny=val
-            dico[i[0][0]]=[nrml, shiny]
-    return dico
-
-
-"""print(img(trad_list(top_10)))"""
 
 def types_pokemons(data):
     """Renvoie un dictionnaire des types du pokemon -> type n : type"""
@@ -102,7 +86,7 @@ def moyenne_types(L):
     """Cette fonction renvoie le nombre de fois ou on croise un type dans le dictionnaire des pokemons ayant le plus de pc"""
     type_counter = Counter()
     for el in L:
-        types_dict = types_pokemons(req("https://pokeapi.co/api/v2/pokemon/"+str(el[0][1])))
+        types_dict = types_pokemons(download_poke_cached(str(el[0][1])))
         for types in types_dict.values():
             type_counter[types['type 1']] += 1
             if 'type 2' in types:
@@ -117,17 +101,28 @@ def moyenne_types(L):
 # Ici on renvoie les trois types les plus rencontrés dans la liste des 50 pokemons ayant le plus de pcs
 
 def top_cmb(sur_cb:int, cb_types:int, dico_avec_noms_et_pcs: dict[str, int]):
+    dico={}
     """cette fonction renvoie les n types rencontrés dans les n pokemons ayant le plus de pc"""
     top_n = heapq.nlargest(sur_cb, dico_avec_noms_et_pcs.items(), key=lambda x: x[1])
-    return heapq.nlargest(cb_types, moyenne_types(trad_list(top_n)).items(), key=lambda x: x[1])
+    top_n_fr=trad_list(top_n)
+    for i in top_n_fr:
+        dico[i[0][0]]=download_poke_cached(i[0][1])["sprites"]["front_default"]
+    return dico, heapq.nlargest(cb_types, moyenne_types(trad_list(top_n)).items(), key=lambda x: x[1])
 
-"""print(top_cmb(100,10))"""
+"""print(top_cmb(5,2,compute_statistics(get_dataset())))"""
 
 def dataset_to_md(sur_cb: int, cb_types: int, donnees: dict, filename: str) -> None:
     stats = compute_statistics(donnees)
-    L = top_cmb(sur_cb, cb_types, stats)
+    image, L = top_cmb(sur_cb, cb_types, stats)
     with open(filename,'w') as f:
-        f.write("# <center> HEY ! VOICI LA LISTE DES "+str(cb_types).upper()+" TYPES QUE L'ON RETROUVE LE PLUS DANS LES "+str(sur_cb)+" POKEMONS AYANT LE PLUS DE POINTS DE COMBAT"+"</center> \n <br><br>")
+        f.write("# <center> HEY ! VOICI LA LISTE DES "+str(sur_cb)+" POKEMONS AYANT LE PLUS DE POINTS DE COMBAT"+"</center> \n <br><br>")
+        i=1
+        for cle, val in image.items():
+            f.write("- Le "+str(i)+"e pokemon est : "+ cle +"\n <br><br>")
+            f.write("![alt text]("+val+") <br><br><br><br>")
+            i+=1
+        f.write("\n")
+        f.write("# <center> VOICI MAINTENANT LA LISTE DES "+str(cb_types).upper()+" TYPES QUE L'ON RETROUVE LE PLUS DANS CES POKEMONS "+"</center> \n <br><br>")
         for i in range(len(L)):
             f.write("- Le "+str(i+1)+"e type est : "+ L[i][0] + " avec "+ str(L[i][1]) + " occurences !" +"\n <br><br>")
    
