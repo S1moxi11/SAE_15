@@ -24,7 +24,7 @@ def get_dataset()->list:
     """cherche dans le cache"""
     L=[]
     for i in download("https://pokeapi.co/api/v2/pokemon/?limit=1302")["results"]:
-        L.append(download_poke_cached(i["url"].split("/")[-2]))
+        L.append(download_poke_cached(i["name"]))
     return L
 
 dataset=get_dataset()
@@ -105,26 +105,48 @@ def top_cmb(sur_cb:int, cb_types:int, dico_avec_noms_et_pcs: dict[str, int]):
     """cette fonction renvoie les n types rencontrés dans les n pokemons ayant le plus de pc"""
     top_n = heapq.nlargest(sur_cb, dico_avec_noms_et_pcs.items(), key=lambda x: x[1])
     top_n_fr=trad_list(top_n)
+    espace=" "
     for i in top_n_fr:
-        dico[i[0][0]]=download_poke_cached(i[0][1])["sprites"]["front_default"]
+        if not i[0][0] in dico :
+            dico[i[0][0]]=download_poke_cached(i[0][1])["sprites"]["front_default"]
+        else : 
+            dico[i[0][0]+espace]=download_poke_cached(i[0][1])["sprites"]["front_default"]
+            espace+=" "
+    print(dico)
     return dico, heapq.nlargest(cb_types, moyenne_types(trad_list(top_n)).items(), key=lambda x: x[1])
 
 """print(top_cmb(5,2,compute_statistics(get_dataset())))"""
 
 def dataset_to_md(sur_cb: int, cb_types: int, donnees: dict, filename: str) -> None:
     stats = compute_statistics(donnees)
-    image, L = top_cmb(sur_cb, cb_types, stats)
-    with open(filename,'w') as f:
-        f.write("# <center> HEY ! VOICI LA LISTE DES "+str(sur_cb)+" POKEMONS AYANT LE PLUS DE POINTS DE COMBAT"+"</center> \n <br><br>")
+    dico, L = top_cmb(sur_cb, cb_types, stats)
+    with open(filename, 'w') as f:
+        f.write("<h1>HEY ! VOICI LA LISTE DES "+ str(sur_cb)+" POKÉMONS AYANT LE PLUS DE POINTS DE COMBAT</h1>")
+        f.write("<ul>")
         i=1
-        for cle, val in image.items():
-            f.write("- Le "+str(i)+"e pokemon est : "+ cle +"\n <br><br>")
-            f.write("![alt text]("+val+") <br><br><br><br>")
+        for pokemon_name, image_url in dico.items():
+            f.write(f"""
+            <li class="pokemon">
+                <img src="{image_url}" alt="{pokemon_name}">
+                <div class="pokemon-details">
+                    <h3>{pokemon_name}</h3>
+                    <p>{i}e Pokémon</p>
+                </div>
+            </li>
+            """)
             i+=1
-        f.write("\n")
-        f.write("# <center> VOICI MAINTENANT LA LISTE DES "+str(cb_types).upper()+" TYPES QUE L'ON RETROUVE LE PLUS DANS CES POKEMONS "+"</center> \n <br><br>")
-        for i in range(len(L)):
-            f.write("- Le "+str(i+1)+"e type est : "+ L[i][0] + " avec "+ str(L[i][1]) + " occurences !" +"\n <br><br>")
+
+        f.write("</ul>")
+
+        f.write("<div class='types-section'>")
+        f.write("<h2>VOICI MAINTENANT LA LISTE DES {} TYPES QUE L'ON RETROUVE LE PLUS DANS CES POKÉMONS</h2>".format(cb_types))
+        f.write("<ul>")
+
+        for type_name, count in L:
+            f.write(f"<li>{type_name} - {count} occurrence(s)</li>")
+
+        f.write("</ul>")
+        f.write("</div>")
    
 
 def infos_locales(sur_cb:int, cb_types:int) -> None:
