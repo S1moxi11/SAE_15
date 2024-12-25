@@ -112,7 +112,6 @@ def top_cmb(sur_cb:int, cb_types:int, dico_avec_noms_et_pcs: dict[str, int]):
         else : 
             dico[i[0][0]+espace]=download_poke_cached(i[0][1])["sprites"]["front_default"]
             espace+=" "
-    print(dico)
     return dico, heapq.nlargest(cb_types, moyenne_types(trad_list(top_n)).items(), key=lambda x: x[1])
 
 """print(top_cmb(5,2,compute_statistics(get_dataset())))"""
@@ -139,7 +138,7 @@ def dataset_to_md(sur_cb: int, cb_types: int, donnees: dict, filename: str) -> N
         f.write("</ul>")
 
         f.write("<div class='types-section'>")
-        f.write("<h2>VOICI MAINTENANT LA LISTE DES {} TYPES QUE L'ON RETROUVE LE PLUS DANS CES POKÉMONS</h2>".format(cb_types))
+        f.write("<h2>VOICI MAINTENANT LA LISTE DES "+ str(cb_types)+" TYPES QUE L'ON RETROUVE LE PLUS DANS CES POKÉMONS</h2>")
         f.write("<ul>")
 
         for type_name, count in L:
@@ -155,7 +154,7 @@ def infos_locales(sur_cb:int, cb_types:int) -> None:
     convert("page_stats.md","page_stats.html")
 
 
-# ATTENTION !!! Ne pas mettre un chiffre trop grand pour le nombre de pokémons au risque d'attendre bcp (ex : environ 30 min pour 1000,10 quand le cache est téléchargé)
+# ATTENTION !!! Ne pas mettre un chiffre trop grand pour le nombre de pokémons au risque d'attendre bcp (ex : environ 7 min pour 1000,10 quand le cache est téléchargé)
 infos_locales(args.sur_cb,args.cb_types)
 
 webbrowser.open("page_stats.html")

@@ -49,7 +49,8 @@ def poke_to_md(data: dict, filename: str) -> None:
         f.write("- Sa puissance d'attaque est de : "+str(dico["attack"])+"\n <br><br>")
         f.write("- Ses points de defense sont de : "+str(dico["defense"])+"\n <br><br>")
         f.write("- Sa vitesse est de : "+str(dico["height"])+"\n <br><br><br>")
-        f.write("![alt text]("+data["sprites"]["front_default"]+")")
+        if type(data["sprites"]["front_default"]) == str :
+            f.write("![alt text]("+str(data["sprites"]["front_default"])+")")
 
 
 
