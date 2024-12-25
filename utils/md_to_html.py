@@ -10,8 +10,8 @@ def convert(md, html_file):
     <html lang="fr">
     <head>
         <meta charset="UTF-8">
-        <title>Statistiques des Pokémon</title>
-        <link rel="stylesheet" href="pokemon_styles.css">
+        <title>SAÉ 15 Pokémons</title>
+        <link rel="stylesheet" href="{html_file[:-5]}.css">
     </head>
     <body>
         {html}
