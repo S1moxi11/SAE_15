@@ -39,18 +39,20 @@ def poke_to_md(data: dict, filename: str) -> None:
         if key.startswith("type"):
             types += value.upper()+" "
 
-    with open(filename,'w') as f:
-
-        f.write("# <center> HEY ! VOICI UNE FICHE SUR "+str(trad(data["species"]["url"])).upper()+"</center> \n <br><br>")
-        f.write("- Son poids est de : "+str(dico["weight"])+"\n <br><br>")
-        f.write("- Sa taille est de : "+str(dico["height"])+"\n <br><br>")
-        f.write("- Son/ses type(s) sont : "+ types +"\n <br><br>")
-        f.write("- Son nombre de points de vie est de : "+str(dico["hp"])+"\n <br><br>")
-        f.write("- Sa puissance d'attaque est de : "+str(dico["attack"])+"\n <br><br>")
-        f.write("- Ses points de defense sont de : "+str(dico["defense"])+"\n <br><br>")
-        f.write("- Sa vitesse est de : "+str(dico["height"])+"\n <br><br><br>")
+    with open(filename, 'w') as f:
+        f.write(f"# <center class='title'>HEY ! VOICI UNE FICHE SUR {str(trad(data['species']['url'])).upper()}</center>\n\n")
+        f.write("## Informations principales\n")
+        f.write(f"- **Poids :** {dico['weight']} kg\n")
+        f.write(f"- **Taille :** {dico['height']} m\n")
+        f.write(f"- **Type(s) :** {types.strip()}\n")
+        f.write(f"- **Points de vie (HP) :** {dico['hp']}\n")
+        f.write(f"- **Puissance d'attaque :** {dico['attack']}\n")
+        f.write(f"- **Points de défense :** {dico['defense']}\n")
+        f.write(f"- **Vitesse :** {dico['speed']}\n\n")
         if type(data["sprites"]["front_default"]) == str :
             f.write("![alt text]("+str(data["sprites"]["front_default"])+")")
+
+            
 
 
 
