@@ -16,3 +16,13 @@ Pour remédier a ce problème, si le nom du pokémon etait deja présent dans la
 - Lorsqu'on a créé le css pour pokestats, a cause de "md_to_html", le css s'appliquait sur pokefiche aussi. On a donc créé un css pour chacun et avec le nom de la page html et dans le code, on change juste l'extension pour qu'il prenne le fichier css.
 Il a suffit de modifier une ligne du fichier css. Voici la ligne modifier : ```<link rel="stylesheet" href="{html_file[:-5]}.css">```
 
+# Ce qu'on a appris
+
+- Transformer un fichier md en html
+- Créer un cache
+- Créer / Utiliser des arguments avec argparse
+- Utiliser le module get de la bibliothèque requests
+
+# Avancement du projet
+
+- Ce projet est fini mais m'a donné envie de refaire un projet a partir d'une base de données en ligne ou une API et d'en faire un jeu.
